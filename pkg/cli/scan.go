@@ -626,7 +626,13 @@ func resolveInputForRemoteTarget(ctx context.Context, input string) (downloadedA
 		})
 
 		if len(nameMatches) == 0 {
-			return nil, nil, fmt.Errorf("no Wolfi package found with name %q in arch %q", input, arch)
+
+			if arch != "aarch64" {
+				return nil, nil, fmt.Errorf("no Wolfi package found with name %q in arch %q", input, arch)
+			}
+
+			logger.Warnf("no Wolfi package found with name %q in arch %q but will continue, it might not have a package built for this arch.", input, arch)
+			continue
 		}
 
 		vers := lo.Map(nameMatches, func(pkg *apk.Package, _ int) string {
